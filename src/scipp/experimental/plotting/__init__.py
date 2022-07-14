@@ -11,6 +11,7 @@ from typing import Union, Dict
 from .plot import Plot
 from .model import Node, show_graph, node, input_node
 from .figure import Figure
+from .scatter3d import Scatter3d
 from . import widgets
 from ... import Variable, DataArray, Dataset, arange
 from ...typing import VariableLike
