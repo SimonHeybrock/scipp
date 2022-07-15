@@ -37,8 +37,6 @@ class Scatter3d(View):
         # Add red/green/blue axes helper
         self.axes_3d = p3.AxesHelper()
 
-        # p = Points(positions=np.random.random([1000, 3]), pixel_size=0.05).points
-
         # Create the pythreejs scene
         self.scene = p3.Scene(children=[self.camera, self.axes_3d],
                               background="#f0f0f0")
@@ -62,13 +60,6 @@ class Scatter3d(View):
                                     width=width,
                                     height=height)
 
-
-# camera = p3.PerspectiveCamera(position=[2.0, 0, 0], aspect=view_width/view_height)
-# scene = p3.Scene(children=[points, camera], background="#DDDDDD")
-# controller = p3.OrbitControls(controlling=camera)
-# renderer = p3.Renderer(camera=camera, scene=scene, controls=[controller],
-#                     width=view_width, height=view_height)
-
     def _ipython_display_(self):
         """
         IPython display representation for Jupyter notebooks.
@@ -81,31 +72,6 @@ class Scatter3d(View):
         """
         self.render()
         return self.renderer
-        # ipw.HBox(
-        #     [self.toolbar._to_widget(),
-        #      ipw.HBox([self.renderer]), self.cbar_image])
-
-    # def _create_point_cloud(self, positions):
-    #     """
-    #     Make a point cloud using pythreejs
-    #     """
-    #     self.points_geometry = p3.BufferGeometry(
-    #         attributes={
-    #             'position':
-    #             p3.BufferAttribute(array=positions),
-    #             'color':
-    #             p3.BufferAttribute(
-    #                 array=np.ones([positions.shape[0], 3], dtype='float32'))
-    #         })
-
-    #     pixel_ratio = 1.0  # config['plot']['pixel_ratio']
-    #     # Note that an additional factor of 2.5 (obtained from trial and error) seems to
-    #     # be required to get the sizes right in the scene.
-    #     self.points_material = p3.PointsMaterial(vertexColors='VertexColors',
-    #                                              size=2.5 * self._pixel_size *
-    #                                              pixel_ratio,
-    #                                              transparent=True)
-    #     return p3.Points(geometry=self.points_geometry, material=self.points_material)
 
     def notify_view(self, message):
         node_id = message["node_id"]
@@ -116,21 +82,14 @@ class Scatter3d(View):
         """
         Update image array with new values.
         """
-        # if new_values.ndim > 1:
-        #     raise ValueError("S can only be used to plot 1-D and 2-D data.")
         if key not in self._children:
             self._new_artist = True
-            # points = Points(positions=new_values.coords['position'].values)
-            self._children[key] = Points(positions=new_values.coords['position'].values)
-            # print("ADDING POINT CLOUD")
+            self._children[key] = Points(data=new_values)
             self.scene.add(self._children[key].points)
         else:
             self._children[key].update(new_values=new_values)
 
-        # self.draw()
-
     def render(self):
-        # print("RENDERING")
         for node in self._graph_nodes.values():
             new_values = node.request_data()
             self._update(new_values=new_values, key=node.id)
